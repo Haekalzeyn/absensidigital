@@ -2,12 +2,10 @@
 session_start();
 require "koneksi.php";
 
-
 if (!isset($_SESSION['admin']) && !isset($_SESSION['guru'])) {
     header("Location: index.php");
     exit;
 }
-
 
 $guru_id = null;
 $isAdmin = isset($_SESSION['admin']);
@@ -19,11 +17,18 @@ if (isset($_SESSION['guru'])) {
     }
 }
 
+/* === Hapus absensi jika admin klik tombol hapus === */
+if ($isAdmin && isset($_GET['hapus'])) {
+    $murid_id = intval($_GET['hapus']);
+    mysqli_query($conn, "DELETE FROM absensi WHERE murid_id='$murid_id' AND tanggal=CURDATE()");
+    header("Location: absensi.php?kelas=" . urlencode($_GET['kelas'] ?? ""));
+    exit;
+}
 
+/* === Input absensi (guru) === */
 if (isset($_POST['submit_absensi']) && $guru_id) {
     $murid_id = $_POST['murid_id'];
     $status   = $_POST['status'];
-
 
     $cek = mysqli_query($conn, "
         SELECT id FROM absensi 
@@ -40,12 +45,10 @@ if (isset($_POST['submit_absensi']) && $guru_id) {
     exit; 
 }
 
-
+/* === Data kelas & murid === */
 $kelasQuery = mysqli_query($conn, "SELECT DISTINCT kelas FROM murid ORDER BY kelas ASC");
 
-
 $selectedKelas = isset($_GET['kelas']) ? $_GET['kelas'] : "";
-
 
 if ($selectedKelas) {
     $result = mysqli_query($conn, "SELECT * FROM murid WHERE kelas='$selectedKelas' ORDER BY nama ASC");
@@ -53,7 +56,7 @@ if ($selectedKelas) {
     $result = mysqli_query($conn, "SELECT * FROM murid ORDER BY nama ASC");
 }
 
-
+/* === Ambil absensi hari ini === */
 $absensiHariIni = [];
 $whereGuru = $guru_id ? "AND guru_id='$guru_id'" : "";
 $q = mysqli_query($conn, "SELECT * FROM absensi WHERE tanggal=CURDATE() $whereGuru");
@@ -61,8 +64,6 @@ while ($row = mysqli_fetch_assoc($q)) {
     $absensiHariIni[$row['murid_id']] = $row['status'];
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="id">
 <head>
@@ -71,24 +72,20 @@ while ($row = mysqli_fetch_assoc($q)) {
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-</head>
-<!-- DataTables CSS -->
 <link rel="stylesheet" href="https://cdn.datatables.net/2.3.4/css/dataTables.dataTables.min.css">
 <link rel="stylesheet" href="css/absensi.css">
 </head>
 <body>
-
 
 <div class="sidebar">
   <h4><i class="fas fa-school"></i> SIAKAD</h4>
   <a href="dashboard.php"><i class="fas fa-home"></i> Dashboard</a>
   <a href="absensi.php" class="bg-white text-dark"><i class="fas fa-clipboard-check"></i> Absensi</a>
   <a href="siswa.php"><i class="fas fa-users"></i> Data Murid</a>
-  <a href="guru.php" class="active"><i class="fas fa-chalkboard-teacher"></i> Data User </a>
+  <a href="guru.php"><i class="fas fa-chalkboard-teacher"></i> Data User </a>
   <a href="laporan.php"><i class="fas fa-file-excel"></i> Laporan</a>
   <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 </div>
-
 
 <nav class="navbar navbar-expand navbar-light px-4">
   <span class="navbar-brand mb-0 h4">📋 Absensi Murid Hari Ini (<?= date("d-m-Y") ?>)</span>
@@ -98,7 +95,6 @@ while ($row = mysqli_fetch_assoc($q)) {
          alt="user" class="rounded-circle" width="35" height="35">
   </div>
 </nav>
-
 
 <div class="content">
   <div class="card p-4">
@@ -123,9 +119,8 @@ while ($row = mysqli_fetch_assoc($q)) {
     </form>
     <?php endif; ?>
 
-   
     <div class="table-responsive">
-  <table class="table table-bordered table-hover text-center" id="absensiTable">
+      <table class="table table-bordered table-hover text-center" id="absensiTable">
         <thead>
           <tr>
             <th>No</th>
@@ -158,12 +153,16 @@ while ($row = mysqli_fetch_assoc($q)) {
                 <?php endif; ?>
               <?php else: ?>
                 <?= isset($absensiHariIni[$row['id']]) ? $absensiHariIni[$row['id']] : '<span class="text-muted">Belum Absen</span>' ?>
+              </td>
+              <td>
                 <?php if(isset($absensiHariIni[$row['id']])): ?>
-                  <a href="?hapus=<?= $row['id'] ?>&kelas=<?= $selectedKelas ?>" class="btn btn-danger btn-sm ms-2"
-                    onclick="return confirm('Yakin ingin hapus absensi murid ini?')"><i class="fas fa-trash"></i></a>
+                  <a href="?hapus=<?= $row['id'] ?>&kelas=<?= $selectedKelas ?>" class="btn btn-danger btn-sm"
+                     onclick="return confirm('Yakin ingin hapus absensi murid ini?')">
+                     <i class="fas fa-trash"></i>
+                  </a>
                 <?php endif; ?>
+              </td>
               <?php endif; ?>
-            </td>
           </tr>
         <?php endwhile; ?>
         </tbody>
@@ -173,7 +172,6 @@ while ($row = mysqli_fetch_assoc($q)) {
 </div>
 
 <script>
-
 function markDone(e, form){
     e.preventDefault();
     const murid_id = form.querySelector('input[name="murid_id"]').value;
@@ -195,7 +193,6 @@ function markDone(e, form){
 }
 </script>
 
-<!-- DataTables JS -->
 <script src="https://cdn.datatables.net/2.3.4/js/dataTables.min.js"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {

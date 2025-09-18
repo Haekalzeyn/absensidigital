@@ -50,17 +50,17 @@ if (isset($_POST['login'])) {
       <!-- Logo sekolah, bisa ganti dengan logo asli -->
       <img src="logo_sekolah.png" alt="Logo Sekolah">
       <h4>Sistem Absensi Digital</h4>
-      <p>SMK Taruna Bangsa</p>
+      <p>-nama sekolah-</p>
     </div>
     <div class="login-body">
       <form method="post">
         <div class="mb-3">
-          <label class="form-label">Nama Panggilan</label>
-          <input type="text" name="username" class="form-control" placeholder="Masukkan username" required>
+          <label class="form-label">Username</label>
+          <input type="text" name="username" class="form-control" placeholder="XXXXXXXX" required>
         </div>
         <div class="mb-3">
           <label class="form-label">Password</label>
-          <input type="password" name="password" class="form-control" placeholder="Masukkan password" required>
+          <input type="password" name="password" class="form-control" placeholder="XXXXXXXX" required>
         </div>
         <button type="submit" name="login" class="btn btn-primary w-100 btn-login">Login</button>
       </form>
@@ -68,8 +68,8 @@ if (isset($_POST['login'])) {
      <p class="text-center register-link">
   Belum punya akun? 
 </p>
-<a href="https://wa.me/6281399694203" target="_blank">
-    <img src="https://img.icons8.com/ios-filled/20/25D366/whatsapp.png" alt="WhatsApp"> Hubungi Admin
+<a href="https://wa.me/6281399694203" target="_blank" class="link">
+    <img src="https://img.icons8.com/ios-filled/20/25D366/whatsapp.png"alt="WhatsApp"> Hubungi Admin
   </a>
     </div>
   </div>

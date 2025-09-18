@@ -42,8 +42,9 @@ $sql = "
     WHERE 1=1
     " . ($selectedKelas ? " AND m.kelas='$selectedKelas'" : "") . "
     GROUP BY m.id
-    ORDER BY m.kelas, m.nama
+    ORDER BY m.nama ASC
 ";
+
 $result = mysqli_query($conn, $sql);
 ?>
 

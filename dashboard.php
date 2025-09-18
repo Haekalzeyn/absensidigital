@@ -28,8 +28,8 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['guru'])) {
     <h2 class="fw-bold text-dark">
       Selamat datang, 
       <?php 
-        if (isset($_SESSION['admin'])) echo "Admin <span class='text-primary'>" . $_SESSION['admin'] . "</span>";
-        if (isset($_SESSION['guru'])) echo "Guru <span class='text-success'>" . $_SESSION['guru'] . "</span>";
+        if (isset($_SESSION['admin'])) echo " <span class='text-primary'>" . $_SESSION['admin'] . "</span>";
+        if (isset($_SESSION['guru'])) echo "<span class='text-success'>" . $_SESSION['guru'] . "</span>";
       ?> 🎉
     </h2>
     <p class="text-muted">Silakan pilih menu di bawah untuk melanjutkan</p>
@@ -45,8 +45,8 @@ if (!isset($_SESSION['admin']) && !isset($_SESSION['guru'])) {
           <div class="icon-bg bg-primary mx-auto mb-3">
             <i class="fas fa-chalkboard-teacher"></i>
           </div>
-          <h5 class="fw-bold">Data Guru</h5>
-          <p class="text-muted">Kelola akun dan informasi guru</p>
+          <h5 class="fw-bold">Data User</h5>
+          <p class="text-muted">Kelola akun dan informasi User</p>
           <a href="guru.php" class="btn btn-primary">Lihat Data</a>
         </div>
       </div>
